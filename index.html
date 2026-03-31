@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026 清明北京行程</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+    color: #333; font-size: 14px; line-height: 1.6;
+    max-width: 480px; margin: 0 auto; padding: 16px;
+    background: #f5f5f5;
+  }
+
+  /* Header */
+  .header {
+    text-align: center; padding: 20px 0 14px; border-bottom: 3px solid #e74c3c;
+    margin-bottom: 16px; background: #fff; border-radius: 12px 12px 0 0;
+    padding: 20px 16px 14px;
+  }
+  .header h1 { font-size: 24px; color: #e74c3c; margin-bottom: 4px; letter-spacing: 2px; }
+  .header .subtitle { font-size: 13px; color: #888; }
+  .header .members { font-size: 13px; color: #555; margin-top: 6px; }
+
+  /* Flight info */
+  .flight-box { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+  .flight-card {
+    border: 1px solid #eee; border-radius: 10px;
+    padding: 12px 14px; background: #fff;
+  }
+  .flight-card .label {
+    display: inline-block; font-size: 11px; font-weight: 600; color: #fff;
+    padding: 2px 8px; border-radius: 4px; margin-bottom: 4px;
+  }
+  .flight-card .label.go { background: #3498db; }
+  .flight-card .label.back { background: #e67e22; }
+  .flight-card .route { font-size: 17px; font-weight: 600; margin: 2px 0; }
+  .flight-card .detail { font-size: 12px; color: #888; }
+
+  /* Overview table */
+  .overview-card { background: #fff; border-radius: 10px; padding: 14px; margin-bottom: 16px; }
+  .overview { width: 100%; border-collapse: collapse; }
+  .overview th {
+    background: #e74c3c; color: #fff; padding: 8px 8px;
+    font-size: 11px; text-align: left;
+  }
+  .overview td { padding: 8px; border-bottom: 1px solid #f0f0f0; font-size: 13px; }
+  .overview tr:nth-child(even) { background: #fafafa; }
+  .overview .day-tag {
+    display: inline-block; background: #e74c3c; color: #fff;
+    border-radius: 8px; padding: 1px 6px; font-size: 10px; font-weight: 600;
+  }
+  .overview .hotel { color: #e67e22; font-weight: 500; font-size: 12px; }
+
+  /* Day section */
+  .day-section { margin-bottom: 14px; border-radius: 10px; overflow: hidden; background: #fff; }
+  .day-header { padding: 10px 14px; color: #fff; font-size: 15px; font-weight: 600; }
+  .day-header .date { font-size: 11px; opacity: 0.9; font-weight: 400; }
+  .day1 .day-header { background: #3498db; }
+  .day2 .day-header { background: #e67e22; }
+  .day3 .day-header { background: #27ae60; }
+  .day4 .day-header { background: #e74c3c; }
+  .day5 .day-header { background: #8e44ad; }
+
+  .day-body { padding: 12px 14px; }
+  .timeline { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+  .timeline th {
+    text-align: left; font-size: 11px; color: #999;
+    padding: 4px 6px; border-bottom: 1px solid #eee;
+  }
+  .timeline td { padding: 6px; font-size: 13px; border-bottom: 1px solid #f5f5f5; }
+  .timeline .time { color: #e74c3c; font-weight: 600; white-space: nowrap; width: 65px; font-size: 12px; }
+  .timeline .note { color: #888; font-size: 11px; }
+
+  .tips {
+    background: #fffbe6; border-left: 3px solid #f1c40f;
+    padding: 8px 10px; margin-top: 8px; font-size: 12px; color: #666;
+    border-radius: 0 6px 6px 0;
+  }
+  .tips strong { color: #e67e22; }
+
+  /* Section title */
+  .section-card { background: #fff; border-radius: 10px; padding: 14px; margin-bottom: 14px; }
+  .section-title {
+    font-size: 15px; font-weight: 600; color: #333;
+    border-bottom: 2px solid #eee; padding-bottom: 6px;
+    margin-bottom: 10px;
+  }
+  .section-title span { color: #e74c3c; }
+
+  /* Booking & budget tables */
+  .info-table { width: 100%; border-collapse: collapse; }
+  .info-table th {
+    background: #f5f5f5; padding: 6px 8px; font-size: 11px;
+    text-align: left; color: #888;
+  }
+  .info-table td { padding: 6px 8px; font-size: 12px; border-bottom: 1px solid #f0f0f0; }
+  .done { color: #27ae60; font-weight: 600; }
+  .urgent { color: #e74c3c; font-weight: 600; }
+  .normal { color: #e67e22; }
+
+  .budget-total {
+    text-align: right; font-size: 17px; color: #e74c3c;
+    font-weight: 700; margin-top: 8px;
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center; color: #ccc; font-size: 11px;
+    margin-top: 20px; padding-top: 10px; border-top: 1px solid #eee;
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <h1>2026 清明北京之旅</h1>
+  <div class="subtitle">04-04 ~ 04-08 | 5 天 4 晚</div>
+  <div class="members">jumpin + 张奕 + 暖暖（8 岁）</div>
+</div>
+
+<!-- Flight Info -->
+<div class="flight-box">
+  <div class="flight-card">
+    <div class="label go">去程</div>
+    <div class="route">深圳 → 北京</div>
+    <div class="detail">04-04 周六 | 10:00 - 13:25 | 深航 ZH9103</div>
+    <div class="detail">宝安 T3 → 首都 T3 | 3h25m</div>
+  </div>
+  <div class="flight-card">
+    <div class="label back">返程</div>
+    <div class="route">北京 → 深圳</div>
+    <div class="detail">04-08 周三 | 15:30 - 18:55 | 海航 HU7709</div>
+    <div class="detail">首都 T2 → 宝安 T3 | 3h25m</div>
+  </div>
+</div>
+
+<!-- Overview -->
+<div class="overview-card">
+<table class="overview">
+  <tr>
+    <th style="width:45px">日期</th>
+    <th>主题</th>
+    <th style="width:70px">住</th>
+  </tr>
+  <tr>
+    <td><span class="day-tag">D1</span><br>04-04</td>
+    <td>接机 → 北大 → 圆明园</td>
+    <td class="hotel">海淀宿舍</td>
+  </tr>
+  <tr>
+    <td><span class="day-tag">D2</span><br>04-05</td>
+    <td>颐和园 + 奥森公园</td>
+    <td class="hotel">海淀宿舍</td>
+  </tr>
+  <tr>
+    <td><span class="day-tag">D3</span><br>04-06</td>
+    <td>国博 + 故宫 + 天安门</td>
+    <td class="hotel">海淀宿舍</td>
+  </tr>
+  <tr>
+    <td><span class="day-tag">D4</span><br>04-07</td>
+    <td>慕田峪长城</td>
+    <td class="hotel">海淀宿舍</td>
+  </tr>
+  <tr>
+    <td><span class="day-tag">D5</span><br>04-08</td>
+    <td>牛街小吃 → 送机</td>
+    <td class="hotel">飞回深圳</td>
+  </tr>
+</table>
+</div>
+
+<!-- Day 1 -->
+<div class="day-section day1">
+  <div class="day-header">D1 — 04-04 周六（半天）<span class="date"> | 到达 + 北大 + 圆明园</span></div>
+  <div class="day-body">
+    <table class="timeline">
+      <tr><th style="width:65px">时间</th><th>安排</th><th style="width:120px">备注</th></tr>
+      <tr><td class="time">13:25</td><td>抵达首都 T3</td><td class="note">jumpin 接机</td></tr>
+      <tr><td class="time">~14:30</td><td>打车回海淀宿舍</td><td class="note">放行李休整</td></tr>
+      <tr><td class="time">~15:30</td><td>北大校园走一走</td><td class="note">西门，未名湖、博雅塔</td></tr>
+      <tr><td class="time">~17:00</td><td>圆明园傍晚散步</td><td class="note">紧挨北大</td></tr>
+      <tr><td class="time">~18:30</td><td>晚餐 → 回宿舍</td><td class="note"></td></tr>
+    </table>
+    <div class="tips">
+      北大、圆明园紧挨着。给暖暖种一颗"长大上北大"的种子。第一天以适应为主。
+    </div>
+  </div>
+</div>
+
+<!-- Day 2 -->
+<div class="day-section day2">
+  <div class="day-header">D2 — 04-05 周日（全天）<span class="date"> | 颐和园 + 奥森公园</span></div>
+  <div class="day-body">
+    <table class="timeline">
+      <tr><th style="width:65px">时间</th><th>安排</th><th style="width:120px">备注</th></tr>
+      <tr><td class="time">8:30</td><td>出发去颐和园</td><td class="note">海淀，很近</td></tr>
+      <tr><td class="time">9:00-12:00</td><td>颐和园游览</td><td class="note">长廊、昆明湖、万寿山</td></tr>
+      <tr><td class="time">12:00</td><td>午餐</td><td class="note">颐和园附近</td></tr>
+      <tr><td class="time">14:00</td><td>前往奥森公园</td><td class="note">打车约 20 分钟</td></tr>
+      <tr><td class="time">14:30-17:00</td><td>奥森散步放风</td><td class="note">暖暖跑跑玩玩</td></tr>
+      <tr><td class="time">傍晚</td><td>回宿舍休息</td><td class="note"></td></tr>
+    </table>
+    <div class="tips">
+      颐和园离宿舍很近，节奏轻松。奥森适合孩子撒欢。<br>
+      <strong>备选：</strong>清华/北大预约成功可替换上午。
+    </div>
+  </div>
+</div>
+
+<!-- Day 3 -->
+<div class="day-section day3">
+  <div class="day-header">D3 — 04-06 周一（全天）<span class="date"> | 国博 + 故宫 + 天安门</span></div>
+  <div class="day-body">
+    <table class="timeline">
+      <tr><th style="width:65px">时间</th><th>安排</th><th style="width:120px">备注</th></tr>
+      <tr><td class="time">8:00</td><td>打车去国家博物馆</td><td class="note">从海淀约 40 分钟</td></tr>
+      <tr><td class="time">8:30-10:30</td><td>国博参观</td><td class="note">精选展厅，不贪多</td></tr>
+      <tr><td class="time">11:00</td><td>步行至故宫午门检票</td><td class="note">下午票 11:00 后入场</td></tr>
+      <tr><td class="time">11:00-15:00</td><td>故宫参观</td><td class="note">中轴线 + 1-2 个偏殿</td></tr>
+      <tr><td class="time">15:00</td><td>出神武门，午餐</td><td class="note">景山/故宫附近</td></tr>
+      <tr><td class="time">~16:30</td><td>打车回天安门广场</td><td class="note">合影留念</td></tr>
+      <tr><td class="time">~17:30</td><td>打车回海淀宿舍</td><td class="note"></td></tr>
+    </table>
+    <div class="tips">
+      故宫下午票 11:00 后检票，上午先逛国博。可由东、西筒子河路至午门入口检票。<br>
+      <strong>弹性：</strong>暖暖累了可缩短国博或故宫。
+    </div>
+  </div>
+</div>
+
+<!-- Day 4 -->
+<div class="day-section day4">
+  <div class="day-header">D4 — 04-07 周二（全天）<span class="date"> | 慕田峪长城</span></div>
+  <div class="day-body">
+    <table class="timeline">
+      <tr><th style="width:65px">时间</th><th>安排</th><th style="width:120px">备注</th></tr>
+      <tr><td class="time">8:00</td><td>从宿舍打车去慕田峪</td><td class="note">约 1-1.5 小时</td></tr>
+      <tr><td class="time">9:30-12:30</td><td>慕田峪长城游览</td><td class="note">缆车上+步行+滑道下</td></tr>
+      <tr><td class="time">12:30</td><td>午餐</td><td class="note">长城脚下</td></tr>
+      <tr><td class="time">~13:30</td><td>打车返回宿舍</td><td class="note">约 1.5h，车上休息</td></tr>
+      <tr><td class="time">下午</td><td>宿舍休整</td><td class="note"></td></tr>
+    </table>
+    <div class="tips">
+      慕田峪人少、植物景观好、有缆车+滑道。暖暖走 30-40 分钟即可。下午早回休息。
+    </div>
+  </div>
+</div>
+
+<!-- Day 5 -->
+<div class="day-section day5">
+  <div class="day-header">D5 — 04-08 周三（半天）<span class="date"> | 牛街小吃 + 送机</span></div>
+  <div class="day-body">
+    <table class="timeline">
+      <tr><th style="width:65px">时间</th><th>安排</th><th style="width:120px">备注</th></tr>
+      <tr><td class="time">8:30</td><td>打车去牛街</td><td class="note">从海淀约 30 分钟</td></tr>
+      <tr><td class="time">9:00-11:00</td><td>牛街逛吃小吃</td><td class="note">聚宝源、白记年糕等</td></tr>
+      <tr><td class="time">11:00</td><td>简单午餐</td><td class="note">牛街附近</td></tr>
+      <tr><td class="time">12:00</td><td>打车去首都 T2</td><td class="note">约 40 分钟</td></tr>
+      <tr><td class="time">13:00</td><td>到达机场值机</td><td class="note">⚠️ 是 T2 不是 T3</td></tr>
+      <tr><td class="time">15:30</td><td>起飞 → 18:55 深圳</td><td class="note">海航 HU7709</td></tr>
+    </table>
+    <div class="tips">
+      ⚠️ 返程是首都 <strong>T2</strong>，别走错航站楼！
+    </div>
+  </div>
+</div>
+
+<!-- Booking -->
+<div class="section-card">
+  <div class="section-title"><span>///</span> 预约状态</div>
+  <table class="info-table">
+    <tr><th>项目</th><th>日期</th><th>状态</th></tr>
+    <tr><td>机票（往返）</td><td>04-04 / 04-08</td><td class="done">✅ 已订</td></tr>
+    <tr><td>故宫（下午票）</td><td>04-06</td><td class="done">✅ 已购 ¥120</td></tr>
+    <tr><td>国家博物馆</td><td>04-06 上午</td><td class="normal">待约（免费）</td></tr>
+    <tr><td>颐和园</td><td>04-05</td><td class="normal">待约</td></tr>
+    <tr><td>慕田峪长城</td><td>04-07</td><td class="normal">待约</td></tr>
+  </table>
+</div>
+
+<!-- Budget -->
+<div class="section-card">
+  <div class="section-title"><span>///</span> 预算估算</div>
+  <table class="info-table">
+    <tr><th>类别</th><th>明细</th><th style="text-align:right">金额</th></tr>
+    <tr><td>机票</td><td>往返 × 2 人</td><td style="text-align:right">~¥3,975</td></tr>
+    <tr><td>门票</td><td>故宫+慕田峪+颐和园+圆明园</td><td style="text-align:right">~¥600</td></tr>
+    <tr><td>打车</td><td>全程</td><td style="text-align:right">~¥800-1,000</td></tr>
+    <tr><td>餐饮</td><td>5 天</td><td style="text-align:right">~¥1,000-1,500</td></tr>
+  </table>
+  <div class="budget-total">总计约 ¥6,400 ~ ¥7,100</div>
+</div>
+
+<div class="footer">
+  Made with care for our little trip | 2026-03-31
+</div>
+
+</body>
+</html>
