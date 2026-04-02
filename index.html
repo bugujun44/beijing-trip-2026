@@ -5,110 +5,235 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>2026 清明北京行程</title>
 <style>
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-4px); }
+    60% { transform: translateY(-2px); }
+  }
+
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
     font-family: -apple-system, "PingFang SC", "Helvetica Neue", Arial, sans-serif;
-    color: #333; font-size: 14px; line-height: 1.6;
+    color: #4a3548; font-size: 14px; line-height: 1.6;
     max-width: 480px; margin: 0 auto; padding: 16px;
-    background: #f5f5f5;
+    background: linear-gradient(180deg, #fff0f5 0%, #f0e6ff 30%, #e6f0ff 60%, #fff0f5 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    position: relative;
+  }
+
+  /* Floating stars background */
+  body::before {
+    content: '⭐ ✨ ⭐ ✨ ⭐ ✨ ⭐';
+    position: fixed; top: 8px; left: 0; right: 0;
+    text-align: center; font-size: 10px; letter-spacing: 12px;
+    animation: twinkle 3s ease-in-out infinite;
+    pointer-events: none; z-index: 0;
   }
 
   /* Header */
   .header {
-    text-align: center; padding: 20px 0 14px; border-bottom: 3px solid #e74c3c;
-    margin-bottom: 16px; background: #fff; border-radius: 12px 12px 0 0;
-    padding: 20px 16px 14px;
+    text-align: center;
+    padding: 24px 16px 18px;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, #ffb8d0 0%, #ffc8dd 50%, #ffd6e7 100%);
+    border-radius: 24px;
+    box-shadow: 0 4px 20px rgba(255, 130, 170, 0.3);
+    position: relative;
+    overflow: hidden;
   }
-  .header h1 { font-size: 24px; color: #e74c3c; margin-bottom: 4px; letter-spacing: 2px; }
-  .header .subtitle { font-size: 13px; color: #888; }
-  .header .members { font-size: 13px; color: #555; margin-top: 6px; }
+  .header::before {
+    content: ''; position: absolute; top: -20px; right: -20px;
+    width: 80px; height: 80px; border-radius: 50%;
+    background: rgba(255,255,255,0.3);
+  }
+  .header::after {
+    content: ''; position: absolute; bottom: -15px; left: -15px;
+    width: 60px; height: 60px; border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+  }
+  .kirby {
+    font-size: 48px; margin-bottom: 4px;
+    animation: float 3s ease-in-out infinite;
+    display: inline-block;
+  }
+  .header h1 {
+    font-size: 22px; color: #d63384; margin-bottom: 4px;
+    letter-spacing: 3px; text-shadow: 1px 1px 0 rgba(255,255,255,0.6);
+    position: relative;
+  }
+  .header .subtitle { font-size: 13px; color: #a05080; }
+  .header .members {
+    font-size: 13px; color: #8b4570; margin-top: 6px;
+    background: rgba(255,255,255,0.5); display: inline-block;
+    padding: 2px 12px; border-radius: 20px;
+  }
+  .star-deco {
+    position: absolute; font-size: 14px;
+    animation: twinkle 2s ease-in-out infinite;
+  }
+  .star-deco.s1 { top: 12px; left: 16px; animation-delay: 0s; }
+  .star-deco.s2 { top: 8px; right: 20px; animation-delay: 0.5s; }
+  .star-deco.s3 { bottom: 10px; right: 40px; animation-delay: 1s; }
 
   /* Flight info */
   .flight-box { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
   .flight-card {
-    border: 1px solid #eee; border-radius: 10px;
-    padding: 12px 14px; background: #fff;
+    border: 2px solid #ffd6e7; border-radius: 18px;
+    padding: 12px 14px;
+    background: linear-gradient(135deg, #fff 0%, #fff5f9 100%);
+    box-shadow: 0 3px 12px rgba(255, 150, 180, 0.15);
+    position: relative;
+  }
+  .flight-card::after {
+    content: '✈️'; position: absolute; top: 10px; right: 14px; font-size: 18px;
   }
   .flight-card .label {
     display: inline-block; font-size: 11px; font-weight: 600; color: #fff;
-    padding: 2px 8px; border-radius: 4px; margin-bottom: 4px;
+    padding: 2px 10px; border-radius: 12px; margin-bottom: 4px;
   }
-  .flight-card .label.go { background: #3498db; }
-  .flight-card .label.back { background: #e67e22; }
-  .flight-card .route { font-size: 17px; font-weight: 600; margin: 2px 0; }
-  .flight-card .detail { font-size: 12px; color: #888; }
+  .flight-card .label.go { background: linear-gradient(135deg, #74b9ff, #a29bfe); }
+  .flight-card .label.back { background: linear-gradient(135deg, #fdcb6e, #e17055); }
+  .flight-card .route { font-size: 17px; font-weight: 600; margin: 2px 0; color: #5a3d6a; }
+  .flight-card .detail { font-size: 12px; color: #9980a8; }
 
   /* Overview table */
-  .overview-card { background: #fff; border-radius: 10px; padding: 14px; margin-bottom: 16px; }
+  .overview-card {
+    background: linear-gradient(135deg, #fff 0%, #fef0ff 100%);
+    border-radius: 18px; padding: 14px; margin-bottom: 16px;
+    box-shadow: 0 3px 12px rgba(200, 150, 220, 0.15);
+    border: 2px solid #f0d6ff;
+  }
   .overview { width: 100%; border-collapse: collapse; }
   .overview th {
-    background: #e74c3c; color: #fff; padding: 8px 8px;
+    background: linear-gradient(135deg, #e8a0c0, #d088b0);
+    color: #fff; padding: 8px 8px;
     font-size: 11px; text-align: left;
+    border-radius: 0;
   }
-  .overview td { padding: 8px; border-bottom: 1px solid #f0f0f0; font-size: 13px; }
-  .overview tr:nth-child(even) { background: #fafafa; }
+  .overview th:first-child { border-radius: 10px 0 0 0; }
+  .overview th:last-child { border-radius: 0 10px 0 0; }
+  .overview td { padding: 8px; border-bottom: 1px solid #f8e8f8; font-size: 13px; }
+  .overview tr:nth-child(even) { background: rgba(255,220,240,0.2); }
   .overview .day-tag {
-    display: inline-block; background: #e74c3c; color: #fff;
-    border-radius: 8px; padding: 1px 6px; font-size: 10px; font-weight: 600;
+    display: inline-block; color: #fff;
+    border-radius: 10px; padding: 1px 8px; font-size: 10px; font-weight: 600;
   }
-  .overview .hotel { color: #e67e22; font-weight: 500; font-size: 12px; }
+  .overview tr:nth-child(1) .day-tag,
+  .overview tr:nth-child(2) .day-tag { background: #74b9ff; }
+  .overview tr:nth-child(3) .day-tag { background: #fdcb6e; }
+  .overview tr:nth-child(4) .day-tag { background: #55efc4; }
+  .overview tr:nth-child(5) .day-tag { background: #ff7675; }
+  .overview tr:nth-child(6) .day-tag { background: #a29bfe; }
+  .overview .hotel { color: #c06090; font-weight: 500; font-size: 12px; }
 
   /* Day section */
-  .day-section { margin-bottom: 14px; border-radius: 10px; overflow: hidden; background: #fff; }
-  .day-header { padding: 10px 14px; color: #fff; font-size: 15px; font-weight: 600; }
+  .day-section {
+    margin-bottom: 16px; border-radius: 20px; overflow: hidden;
+    background: #fff;
+    box-shadow: 0 4px 16px rgba(180, 140, 200, 0.15);
+    border: 2px solid transparent;
+  }
+  .day-header {
+    padding: 12px 16px; color: #fff; font-size: 15px; font-weight: 600;
+    position: relative;
+  }
   .day-header .date { font-size: 11px; opacity: 0.9; font-weight: 400; }
-  .day1 .day-header { background: #3498db; }
-  .day2 .day-header { background: #e67e22; }
-  .day3 .day-header { background: #27ae60; }
-  .day4 .day-header { background: #e74c3c; }
-  .day5 .day-header { background: #8e44ad; }
+  .day-header .day-icon {
+    position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+    font-size: 22px; animation: bounce 2s ease-in-out infinite;
+  }
+
+  .day1 { border-color: #a0d8ff; }
+  .day1 .day-header { background: linear-gradient(135deg, #74b9ff, #81ecec); }
+  .day2 { border-color: #ffd0a0; }
+  .day2 .day-header { background: linear-gradient(135deg, #fdcb6e, #e17055); }
+  .day3 { border-color: #a0ffc8; }
+  .day3 .day-header { background: linear-gradient(135deg, #55efc4, #00b894); }
+  .day4 { border-color: #ffa0b0; }
+  .day4 .day-header { background: linear-gradient(135deg, #ff7675, #d63031); }
+  .day5 { border-color: #c8a0ff; }
+  .day5 .day-header { background: linear-gradient(135deg, #a29bfe, #6c5ce7); }
 
   .day-body { padding: 12px 14px; }
   .timeline { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
   .timeline th {
-    text-align: left; font-size: 11px; color: #999;
-    padding: 4px 6px; border-bottom: 1px solid #eee;
+    text-align: left; font-size: 11px; color: #b898c0;
+    padding: 4px 6px; border-bottom: 2px dashed #f0e0f5;
   }
-  .timeline td { padding: 6px; font-size: 13px; border-bottom: 1px solid #f5f5f5; }
-  .timeline .time { color: #e74c3c; font-weight: 600; white-space: nowrap; width: 65px; font-size: 12px; }
-  .timeline .note { color: #888; font-size: 11px; }
+  .timeline td {
+    padding: 7px 6px; font-size: 13px;
+    border-bottom: 1px dashed #f5eaf8;
+  }
+  .timeline .time {
+    color: #d63384; font-weight: 700; white-space: nowrap;
+    width: 65px; font-size: 12px;
+  }
+  .timeline .note { color: #a080b0; font-size: 11px; }
 
   .tips {
-    background: #fffbe6; border-left: 3px solid #f1c40f;
-    padding: 8px 10px; margin-top: 8px; font-size: 12px; color: #666;
-    border-radius: 0 6px 6px 0;
+    background: linear-gradient(135deg, #fff9e6, #fff0f5);
+    border-left: 4px solid #ffd700;
+    padding: 10px 12px; margin-top: 10px; font-size: 12px; color: #7a6080;
+    border-radius: 0 12px 12px 0;
+    position: relative;
   }
-  .tips strong { color: #e67e22; }
+  .tips::before { content: '💡'; margin-right: 4px; }
+  .tips strong { color: #d63384; }
 
   /* Section title */
-  .section-card { background: #fff; border-radius: 10px; padding: 14px; margin-bottom: 14px; }
+  .section-card {
+    background: linear-gradient(135deg, #fff 0%, #fff5f9 100%);
+    border-radius: 18px; padding: 14px; margin-bottom: 14px;
+    box-shadow: 0 3px 12px rgba(200, 150, 220, 0.12);
+    border: 2px solid #ffd6e7;
+  }
   .section-title {
-    font-size: 15px; font-weight: 600; color: #333;
-    border-bottom: 2px solid #eee; padding-bottom: 6px;
+    font-size: 15px; font-weight: 600; color: #8b4570;
+    border-bottom: 2px dashed #f0d0e0; padding-bottom: 6px;
     margin-bottom: 10px;
   }
-  .section-title span { color: #e74c3c; }
+  .section-title span { color: #d63384; }
 
   /* Booking & budget tables */
   .info-table { width: 100%; border-collapse: collapse; }
   .info-table th {
-    background: #f5f5f5; padding: 6px 8px; font-size: 11px;
-    text-align: left; color: #888;
+    background: linear-gradient(135deg, #ffe8f0, #f8e0ff);
+    padding: 6px 8px; font-size: 11px;
+    text-align: left; color: #a07090;
+    border-radius: 0;
   }
-  .info-table td { padding: 6px 8px; font-size: 12px; border-bottom: 1px solid #f0f0f0; }
-  .done { color: #27ae60; font-weight: 600; }
-  .urgent { color: #e74c3c; font-weight: 600; }
-  .normal { color: #e67e22; }
+  .info-table td {
+    padding: 6px 8px; font-size: 12px;
+    border-bottom: 1px dashed #f5e5f0;
+  }
+  .done { color: #00b894; font-weight: 600; }
+  .urgent { color: #d63031; font-weight: 600; }
+  .normal { color: #e17055; }
 
   .budget-total {
-    text-align: right; font-size: 17px; color: #e74c3c;
+    text-align: right; font-size: 17px; color: #d63384;
     font-weight: 700; margin-top: 8px;
   }
+  .budget-total::before { content: '⭐ '; }
 
   /* Footer */
   .footer {
-    text-align: center; color: #ccc; font-size: 11px;
-    margin-top: 20px; padding-top: 10px; border-top: 1px solid #eee;
+    text-align: center; color: #c8a0c0; font-size: 11px;
+    margin-top: 24px; padding-top: 12px;
+    border-top: 2px dashed #f0d0e8;
+  }
+  .footer .kirby-foot {
+    font-size: 28px; display: block; margin-bottom: 4px;
+    animation: float 4s ease-in-out infinite;
   }
 </style>
 </head>
@@ -116,21 +241,25 @@
 
 <!-- Header -->
 <div class="header">
-  <h1>2026 清明北京之旅</h1>
+  <span class="star-deco s1">⭐</span>
+  <span class="star-deco s2">🌟</span>
+  <span class="star-deco s3">✨</span>
+  <div class="kirby">(>'-')> ⭐</div>
+  <h1>清明北京之旅</h1>
   <div class="subtitle">04-04 ~ 04-08 | 5 天 4 晚</div>
-  <div class="members">jumpin + 张奕 + 暖暖（8 岁）</div>
+  <div class="members">👨 jumpin + 👩 张奕 + 👧 暖暖（8 岁）</div>
 </div>
 
 <!-- Flight Info -->
 <div class="flight-box">
   <div class="flight-card">
-    <div class="label go">去程</div>
+    <div class="label go">✈ 去程</div>
     <div class="route">深圳 → 北京</div>
     <div class="detail">04-04 周六 | 10:00 - 13:25 | 深航 ZH9103</div>
     <div class="detail">宝安 T3 → 首都 T3 | 3h25m</div>
   </div>
   <div class="flight-card">
-    <div class="label back">返程</div>
+    <div class="label back">✈ 返程</div>
     <div class="route">北京 → 深圳</div>
     <div class="detail">04-08 周三 | 15:30 - 18:55 | 海航 HU7709</div>
     <div class="detail">首都 T2 → 宝安 T3 | 3h25m</div>
@@ -147,39 +276,39 @@
   </tr>
   <tr>
     <td><span class="day-tag">D1</span><br>04-04</td>
-    <td>接机 → 颐和园</td>
-    <td class="hotel">海淀宿舍</td>
+    <td>🛬 接机 → 颐和园</td>
+    <td class="hotel">🏠 海淀</td>
   </tr>
   <tr>
     <td><span class="day-tag">D2</span><br>04-05</td>
-    <td>慕田峪长城</td>
-    <td class="hotel">海淀宿舍</td>
+    <td>🏯 慕田峪长城</td>
+    <td class="hotel">🏠 海淀</td>
   </tr>
   <tr>
     <td><span class="day-tag">D3</span><br>04-06</td>
-    <td>牛街 + 故宫</td>
-    <td class="hotel">海淀宿舍</td>
+    <td>🍢 牛街 + 🏛 故宫</td>
+    <td class="hotel">🏠 海淀</td>
   </tr>
   <tr>
     <td><span class="day-tag">D4</span><br>04-07</td>
-    <td>国博·庞贝展 + 天安门 + 北大</td>
-    <td class="hotel">海淀宿舍</td>
+    <td>🌋 庞贝展 + 🇨🇳 天安门 + 🎓 北大</td>
+    <td class="hotel">🏠 海淀</td>
   </tr>
   <tr>
     <td><span class="day-tag">D5</span><br>04-08</td>
-    <td>雍和宫 → 送机</td>
-    <td class="hotel">飞回深圳</td>
+    <td>🛕 雍和宫 → ✈️ 送机</td>
+    <td class="hotel">🏠 回深圳</td>
   </tr>
 </table>
 </div>
 
 <!-- Day 1 -->
 <div class="day-section day1">
-  <div class="day-header">D1 — 04-04 周六（半天）<span class="date"> | 到达 + 颐和园</span></div>
+  <div class="day-header">D1 — 04-04 周六（半天）<span class="date"> | 到达 + 颐和园</span><span class="day-icon">🛬</span></div>
   <div class="day-body">
     <table class="timeline">
       <tr><th style="width:65px">时间</th><th>安排</th><th style="width:120px">备注</th></tr>
-      <tr><td class="time">13:25</td><td>抵达首都 T3</td><td class="note">jumpin 接机</td></tr>
+      <tr><td class="time">13:25</td><td>抵达首都 T3</td><td class="note">jumpin 接机 🎉</td></tr>
       <tr><td class="time">~14:30</td><td>打车回海淀宿舍</td><td class="note">放行李休整</td></tr>
       <tr><td class="time">~15:30</td><td>前往颐和园</td><td class="note">海淀，很近</td></tr>
       <tr><td class="time">15:30-18:00</td><td>颐和园游览</td><td class="note">长廊、昆明湖、万寿山</td></tr>
@@ -194,15 +323,15 @@
 
 <!-- Day 2 -->
 <div class="day-section day2">
-  <div class="day-header">D2 — 04-05 周日（全天）<span class="date"> | 慕田峪长城</span></div>
+  <div class="day-header">D2 — 04-05 周日（全天）<span class="date"> | 慕田峪长城</span><span class="day-icon">🏯</span></div>
   <div class="day-body">
     <table class="timeline">
       <tr><th style="width:65px">时间</th><th>安排</th><th style="width:120px">备注</th></tr>
       <tr><td class="time">6:00</td><td>从宿舍打车出发</td><td class="note">早起！约 1-1.5h 车程</td></tr>
       <tr><td class="time">~7:15</td><td>到达慕田峪</td><td class="note">7:30 开园，第一批进</td></tr>
-      <tr><td class="time">7:30-10:30</td><td>长城游览</td><td class="note">缆车上+步行+滑道下</td></tr>
+      <tr><td class="time">7:30-10:30</td><td>长城游览</td><td class="note">缆车上+步行+滑道下 🎢</td></tr>
       <tr><td class="time">~10:30</td><td>下山，简单午餐</td><td class="note">长城脚下</td></tr>
-      <tr><td class="time">~11:00</td><td>打车返回宿舍</td><td class="note">约 1.5h，车上补觉</td></tr>
+      <tr><td class="time">~11:00</td><td>打车返回宿舍</td><td class="note">约 1.5h，车上补觉 💤</td></tr>
       <tr><td class="time">下午</td><td>宿舍休整</td><td class="note">暖暖午睡</td></tr>
     </table>
     <div class="tips">
@@ -214,14 +343,14 @@
 
 <!-- Day 3 -->
 <div class="day-section day3">
-  <div class="day-header">D3 — 04-06 周一（全天）<span class="date"> | 牛街 + 故宫</span></div>
+  <div class="day-header">D3 — 04-06 周一（全天）<span class="date"> | 牛街 + 故宫</span><span class="day-icon">🏛</span></div>
   <div class="day-body">
     <table class="timeline">
       <tr><th style="width:65px">时间</th><th>安排</th><th style="width:120px">备注</th></tr>
       <tr><td class="time">8:30</td><td>打车去牛街</td><td class="note">从海淀约 30 分钟</td></tr>
-      <tr><td class="time">9:00-10:30</td><td>牛街逛吃</td><td class="note">聚宝源、白记年糕等</td></tr>
+      <tr><td class="time">9:00-10:30</td><td>牛街逛吃 🍢</td><td class="note">聚宝源、白记年糕等</td></tr>
       <tr><td class="time">10:30</td><td>打车前往故宫午门</td><td class="note">牛街→故宫约 20 分钟</td></tr>
-      <tr><td class="time">11:00-15:00</td><td>故宫参观</td><td class="note">下午票 11:00+ 检票</td></tr>
+      <tr><td class="time">11:00-15:00</td><td>故宫参观 🏛</td><td class="note">下午票 11:00+ 检票</td></tr>
       <tr><td class="time">15:00</td><td>出神武门，午餐</td><td class="note">景山/故宫附近</td></tr>
       <tr><td class="time">~16:00</td><td>打车回海淀宿舍</td><td class="note">早点休息</td></tr>
     </table>
@@ -234,37 +363,37 @@
 
 <!-- Day 4 -->
 <div class="day-section day4">
-  <div class="day-header">D4 — 04-07 周二（全天）<span class="date"> | 国博·庞贝展 + 天安门 + 北大</span></div>
+  <div class="day-header">D4 — 04-07 周二（全天）<span class="date"> | 庞贝展 + 天安门 + 北大</span><span class="day-icon">🌋</span></div>
   <div class="day-body">
     <table class="timeline">
       <tr><th style="width:65px">时间</th><th>安排</th><th style="width:120px">备注</th></tr>
       <tr><td class="time">8:00</td><td>打车去国家博物馆</td><td class="note">从海淀约 40 分钟</td></tr>
-      <tr><td class="time">9:00-12:00</td><td>庞贝展参观</td><td class="note">叩问永恒——庞贝的探索与发掘</td></tr>
+      <tr><td class="time">9:00-12:00</td><td>庞贝展参观 🌋</td><td class="note">叩问永恒——庞贝的探索与发掘</td></tr>
       <tr><td class="time">12:00</td><td>午餐</td><td class="note">国博附近/前门大街</td></tr>
-      <tr><td class="time">~13:30</td><td>天安门广场合影</td><td class="note">国博出来步行 5 分钟</td></tr>
+      <tr><td class="time">~13:30</td><td>天安门广场合影 📸</td><td class="note">国博出来步行 5 分钟</td></tr>
       <tr><td class="time">~14:30</td><td>打车前往北大</td><td class="note">天安门→北大约 40 分钟</td></tr>
-      <tr><td class="time">15:00-17:00</td><td>北大校园走一走</td><td class="note">西门，未名湖、博雅塔</td></tr>
+      <tr><td class="time">15:00-17:00</td><td>北大校园走一走 🎓</td><td class="note">西门，未名湖、博雅塔</td></tr>
       <tr><td class="time">傍晚</td><td>回宿舍</td><td class="note">北大离宿舍很近</td></tr>
     </table>
     <div class="tips">
       庞贝展是国博重磅特展，3 张票已购（¥300）。<br>
-      国博→天安门步行 5 分钟，顺路合影。下午去北大给暖暖种一颗"长大上北大"的种子。
+      国博→天安门步行 5 分钟，顺路合影。下午去北大给暖暖种一颗"长大上北大"的种子 🌱
     </div>
   </div>
 </div>
 
 <!-- Day 5 -->
 <div class="day-section day5">
-  <div class="day-header">D5 — 04-08 周三（半天）<span class="date"> | 雍和宫 + 送机</span></div>
+  <div class="day-header">D5 — 04-08 周三（半天）<span class="date"> | 雍和宫 + 送机</span><span class="day-icon">🛕</span></div>
   <div class="day-body">
     <table class="timeline">
       <tr><th style="width:65px">时间</th><th>安排</th><th style="width:120px">备注</th></tr>
       <tr><td class="time">8:30</td><td>打车去雍和宫</td><td class="note">从海淀约 30 分钟</td></tr>
-      <tr><td class="time">9:00-10:30</td><td>雍和宫参观</td><td class="note">藏传佛教寺院，很有特色</td></tr>
+      <tr><td class="time">9:00-10:30</td><td>雍和宫参观 🛕</td><td class="note">藏传佛教寺院，很有特色</td></tr>
       <tr><td class="time">~11:00</td><td>周边逛逛 / 午餐</td><td class="note">五道营胡同/国子监街</td></tr>
       <tr><td class="time">12:00</td><td>打车去首都 T2</td><td class="note">雍和宫→T2 约 30 分钟</td></tr>
       <tr><td class="time">13:00</td><td>到达机场值机</td><td class="note">⚠️ 是 T2 不是 T3</td></tr>
-      <tr><td class="time">15:30</td><td>起飞 → 18:55 深圳</td><td class="note">海航 HU7709</td></tr>
+      <tr><td class="time">15:30</td><td>起飞 → 18:55 深圳 ✈️</td><td class="note">海航 HU7709</td></tr>
     </table>
     <div class="tips">
       雍和宫→首都 T2 比海淀出发更近，送机更从容。<br>
@@ -275,33 +404,34 @@
 
 <!-- Booking -->
 <div class="section-card">
-  <div class="section-title"><span>///</span> 预约状态</div>
+  <div class="section-title"><span>⭐</span> 预约状态</div>
   <table class="info-table">
     <tr><th>项目</th><th>日期</th><th>状态</th></tr>
-    <tr><td>机票（往返）</td><td>04-04 / 04-08</td><td class="done">✅ 已订</td></tr>
-    <tr><td>故宫（下午票）</td><td>04-06</td><td class="done">✅ 已购 ¥120</td></tr>
-    <tr><td>国博·庞贝展</td><td>04-07</td><td class="done">✅ 已购 ¥300</td></tr>
-    <tr><td>慕田峪长城</td><td>04-05</td><td class="normal">待约</td></tr>
-    <tr><td>颐和园</td><td>04-04</td><td class="normal">待约</td></tr>
-    <tr><td>雍和宫</td><td>04-08</td><td class="normal">待确认</td></tr>
+    <tr><td>✈️ 机票（往返）</td><td>04-04 / 04-08</td><td class="done">✅ 已订</td></tr>
+    <tr><td>🏛 故宫（下午票）</td><td>04-06</td><td class="done">✅ 已购 ¥120</td></tr>
+    <tr><td>🌋 国博·庞贝展</td><td>04-07</td><td class="done">✅ 已购 ¥300</td></tr>
+    <tr><td>🏯 慕田峪长城</td><td>04-05</td><td class="normal">⏳ 待约</td></tr>
+    <tr><td>⛲ 颐和园</td><td>04-04</td><td class="normal">⏳ 待约</td></tr>
+    <tr><td>🛕 雍和宫</td><td>04-08</td><td class="normal">⏳ 待确认</td></tr>
   </table>
 </div>
 
 <!-- Budget -->
 <div class="section-card">
-  <div class="section-title"><span>///</span> 预算估算</div>
+  <div class="section-title"><span>⭐</span> 预算估算</div>
   <table class="info-table">
     <tr><th>类别</th><th>明细</th><th style="text-align:right">金额</th></tr>
-    <tr><td>机票</td><td>往返 × 2 人</td><td style="text-align:right">~¥3,975</td></tr>
-    <tr><td>门票</td><td>故宫+国博庞贝展+慕田峪+颐和园+雍和宫</td><td style="text-align:right">~¥900</td></tr>
-    <tr><td>打车</td><td>全程</td><td style="text-align:right">~¥800-1,000</td></tr>
-    <tr><td>餐饮</td><td>5 天</td><td style="text-align:right">~¥1,000-1,500</td></tr>
+    <tr><td>✈️ 机票</td><td>往返 × 2 人</td><td style="text-align:right">~¥3,975</td></tr>
+    <tr><td>🎫 门票</td><td>故宫+庞贝展+慕田峪+颐和园+雍和宫</td><td style="text-align:right">~¥900</td></tr>
+    <tr><td>🚕 打车</td><td>全程</td><td style="text-align:right">~¥800-1,000</td></tr>
+    <tr><td>🍜 餐饮</td><td>5 天</td><td style="text-align:right">~¥1,000-1,500</td></tr>
   </table>
   <div class="budget-total">总计约 ¥6,700 ~ ¥7,400</div>
 </div>
 
 <div class="footer">
-  Made with care for our little trip | 2026-03-29
+  <span class="kirby-foot">(>'-')> ⭐ <('-'<)</span>
+  暖暖的北京探险 | 2026
 </div>
 
 </body>
