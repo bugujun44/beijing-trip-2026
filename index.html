@@ -1017,10 +1017,14 @@ function renderDrafts() {
   const container = document.getElementById('note-drafts');
   const today = new Date();
   const key = String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
-  const drafts = NOTE_DRAFTS[key];
+  const allKeys = Object.keys(NOTE_DRAFTS).sort();
+  // 精确匹配今天，或取最近的未来日期，或取最后一天
+  let matchKey = allKeys.includes(key) ? key : allKeys.find(k => k >= key) || allKeys[allKeys.length - 1];
+  const drafts = NOTE_DRAFTS[matchKey];
   if (!drafts) { container.style.display = 'none'; return; }
+  const dayLabel = matchKey === key ? '今日' : matchKey + ' ';
   container.style.display = 'flex';
-  container.innerHTML = '<div class="note-drafts-title">💡 今日快捷草稿</div>' +
+  container.innerHTML = '<div class="note-drafts-title">💡 ' + dayLabel + '快捷草稿</div>' +
     drafts.map(d => '<button class="note-draft-btn">' + d + '</button>').join('');
   container.querySelectorAll('.note-draft-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -1304,11 +1308,30 @@ document.querySelectorAll('.timeline td').forEach(td => {
           progressFill.style.width = ((currentIndex + 1) / facts.length * 100) + '%';
           counter.textContent = (currentIndex + 1) + ' / ' + facts.length;
         }
+        function getChineseVoice() {
+          const voices = speechSynthesis.getVoices();
+          // 优先选年轻女声
+          const preferred = ['Tingting', 'Shanshan', '小燕', 'Lili', 'Google 普通话', 'Huihui'];
+          for (const name of preferred) {
+            const v = voices.find(v => v.name.includes(name) && v.lang.startsWith('zh'));
+            if (v) return v;
+          }
+          // 兜底：任意中文女声
+          return voices.find(v => v.lang.startsWith('zh')) || null;
+        }
+        // 预加载声音列表
+        speechSynthesis.getVoices();
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+          speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+        }
         function speakCurrent() {
           speechSynthesis.cancel();
           const utter = new SpeechSynthesisUtterance(facts[currentIndex]);
           utter.lang = 'zh-CN';
-          utter.rate = 0.9;
+          utter.rate = 0.95;
+          utter.pitch = 1.2;
+          const voice = getChineseVoice();
+          if (voice) utter.voice = voice;
           utter.onend = () => {
             if (isPlaying && currentIndex < facts.length - 1) {
               currentIndex++;
