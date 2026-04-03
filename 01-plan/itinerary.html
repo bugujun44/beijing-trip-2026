@@ -362,6 +362,69 @@
   position: fixed; font-size: 20px; z-index: 5001;
   animation: starRain 2s ease-in forwards; pointer-events: none;
 }
+
+/* Love notes */
+.note-write-form { display: flex; flex-direction: column; gap: 12px; }
+.note-write-form textarea {
+  width: 100%; height: 80px; border: 2px solid #ffd6e7; border-radius: 14px;
+  padding: 12px; font-size: 14px; font-family: inherit; resize: none;
+  background: #fff; color: #4a3548;
+}
+.note-write-form textarea:focus { outline: none; border-color: #d63384; }
+.note-from-toggle {
+  display: flex; gap: 8px; justify-content: center;
+}
+.note-from-toggle button {
+  padding: 6px 20px; border-radius: 16px; border: 2px solid #ffd6e7;
+  background: #fff; color: #8b4570; font-size: 13px; font-weight: 600;
+  cursor: pointer;
+}
+.note-from-toggle button.active {
+  background: linear-gradient(135deg, #ff7675, #d63384); color: #fff; border-color: transparent;
+}
+.note-send-btn {
+  padding: 10px; border-radius: 20px; border: none;
+  background: linear-gradient(135deg, #ff7675, #d63384); color: #fff;
+  font-size: 15px; font-weight: 600; cursor: pointer;
+}
+.note-send-btn:disabled { opacity: 0.5; }
+.note-charcount { text-align: right; font-size: 11px; color: #b898c0; }
+
+/* Envelope notification */
+.envelope-notify {
+  display: none; justify-content: center; margin-bottom: 12px;
+  animation: float 2s ease-in-out infinite;
+  cursor: pointer;
+}
+.envelope-notify.show { display: flex; }
+.envelope-notify .envelope {
+  background: linear-gradient(135deg, #ffc8dd, #ffb8d0);
+  padding: 10px 20px; border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(255, 150, 180, 0.3);
+  font-size: 14px; color: #8b4570; font-weight: 600;
+}
+
+/* Note card */
+.note-card {
+  background: linear-gradient(135deg, #fffde6, #fff5e6);
+  border: 1px solid #ffeebb; border-radius: 14px;
+  padding: 14px; margin-bottom: 10px; position: relative;
+  box-shadow: 0 2px 8px rgba(200,180,100,0.15);
+  transform: rotate(-0.5deg);
+}
+.note-card .note-content { font-size: 14px; color: #5a4830; line-height: 1.6; }
+.note-card .note-meta {
+  display: flex; justify-content: space-between; margin-top: 8px;
+  font-size: 11px; color: #b8a080;
+}
+.note-day-group { font-size: 13px; color: #d63384; font-weight: 600; margin: 12px 0 6px; }
+
+/* Note open animation */
+@keyframes envelopeOpen {
+  0% { transform: scale(0.8) rotateX(30deg); opacity: 0; }
+  100% { transform: scale(1) rotateX(0deg); opacity: 1; }
+}
+.note-card.new { animation: envelopeOpen 0.6s ease-out; }
 </style>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -377,6 +440,11 @@
   <h1>清明北京之旅</h1>
   <div class="subtitle">04-04 ~ 04-08 | 5 天 4 晚</div>
   <div class="members">👨 jumpin + 👩 张奕 + 👧 暖暖（8 岁）</div>
+</div>
+
+<!-- Envelope Notification -->
+<div class="envelope-notify" id="envelope-notify" onclick="openLatestNote()">
+  <div class="envelope">💌 有新纸条！点我打开~</div>
 </div>
 
 <!-- Flight Info -->
@@ -599,6 +667,32 @@
   <button class="close-celebration" onclick="closeCelebration()">太棒了！</button>
 </div>
 
+<!-- Write Note Overlay -->
+<div class="overlay" id="note-write-overlay">
+  <div class="overlay-panel">
+    <button class="overlay-close" onclick="closeOverlay('note-write-overlay')">✕</button>
+    <div class="overlay-title">✏️ 给暖暖写纸条</div>
+    <div class="note-write-form">
+      <textarea id="note-input" maxlength="50" placeholder="写点什么给暖暖..."></textarea>
+      <div class="note-charcount"><span id="note-charcount">0</span>/50</div>
+      <div class="note-from-toggle">
+        <button class="active" data-from="爸爸" onclick="selectFrom(this)">👨 爸爸</button>
+        <button data-from="妈妈" onclick="selectFrom(this)">👩 妈妈</button>
+      </div>
+      <button class="note-send-btn" id="note-send-btn" onclick="sendNote()" disabled>💌 送出纸条</button>
+    </div>
+  </div>
+</div>
+
+<!-- Note Box Overlay -->
+<div class="overlay" id="notebox-overlay">
+  <div class="overlay-panel">
+    <button class="overlay-close" onclick="closeOverlay('notebox-overlay')">✕</button>
+    <div class="overlay-title">📮 暖暖的纸条盒</div>
+    <div id="notebox-list"><p style="text-align:center;color:#b898c0;font-size:13px">还没有纸条哦~</p></div>
+  </div>
+</div>
+
 <!-- Bottom Nav -->
 <nav class="bottom-nav">
   <button class="nav-btn" onclick="toggleOverlay('stamp-overlay')">
@@ -777,6 +871,166 @@ db.ref('trips/beijing2026/stamps').on('value', snap => {
 });
 
 renderStamps();
+
+// === Love Notes ===
+let noteFrom = '爸爸';
+let notesData = {};
+
+// Load from localStorage
+try {
+  notesData = JSON.parse(localStorage.getItem('notes') || '{}');
+} catch(e) {}
+
+function saveNotesLocal() {
+  localStorage.setItem('notes', JSON.stringify(notesData));
+}
+
+// Char count
+document.getElementById('note-input').addEventListener('input', e => {
+  const len = e.target.value.length;
+  document.getElementById('note-charcount').textContent = len;
+  document.getElementById('note-send-btn').disabled = len === 0;
+});
+
+function selectFrom(btn) {
+  document.querySelectorAll('.note-from-toggle button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  noteFrom = btn.dataset.from;
+}
+
+function sendNote() {
+  const input = document.getElementById('note-input');
+  const content = input.value.trim();
+  if (!content) return;
+
+  const noteId = 'note_' + Date.now();
+  const note = {
+    content: content,
+    from: noteFrom,
+    time: new Date().toISOString(),
+    read: false
+  };
+
+  notesData[noteId] = note;
+  saveNotesLocal();
+  db.ref('trips/beijing2026/notes/' + noteId).set(note);
+
+  input.value = '';
+  document.getElementById('note-charcount').textContent = '0';
+  document.getElementById('note-send-btn').disabled = true;
+  closeOverlay('note-write-overlay');
+}
+
+function checkUnreadNotes() {
+  const unread = Object.values(notesData).filter(n => !n.read);
+  const envelope = document.getElementById('envelope-notify');
+  const badge = document.querySelector('#notebox-btn .badge');
+
+  if (unread.length > 0) {
+    envelope.classList.add('show');
+  } else {
+    envelope.classList.remove('show');
+  }
+
+  // Update badge
+  if (badge) badge.remove();
+  if (unread.length > 0) {
+    const b = document.createElement('span');
+    b.className = 'badge';
+    b.textContent = unread.length;
+    document.getElementById('notebox-btn').appendChild(b);
+  }
+}
+
+function openLatestNote() {
+  const unread = Object.entries(notesData)
+    .filter(([k, v]) => !v.read)
+    .sort((a, b) => new Date(b[1].time) - new Date(a[1].time));
+
+  if (unread.length === 0) return;
+
+  const [noteId, note] = unread[0];
+  note.read = true;
+  notesData[noteId] = note;
+  saveNotesLocal();
+  db.ref('trips/beijing2026/notes/' + noteId + '/read').set(true);
+
+  // Show in notebox
+  toggleOverlay('notebox-overlay');
+  renderNotebox();
+  checkUnreadNotes();
+}
+
+function renderNotebox() {
+  const list = document.getElementById('notebox-list');
+  const entries = Object.entries(notesData)
+    .filter(([k, v]) => v.content)
+    .sort((a, b) => new Date(b[1].time) - new Date(a[1].time));
+
+  if (entries.length === 0) {
+    list.innerHTML = '<p style="text-align:center;color:#b898c0;font-size:13px">还没有纸条哦~</p>';
+    return;
+  }
+
+  // Group by date
+  const groups = {};
+  entries.forEach(([id, note]) => {
+    const day = note.time.split('T')[0];
+    if (!groups[day]) groups[day] = [];
+    groups[day].push({ id, ...note });
+  });
+
+  list.innerHTML = '';
+  Object.entries(groups).sort((a, b) => b[0].localeCompare(a[0])).forEach(([day, notes]) => {
+    const dayEl = document.createElement('div');
+    dayEl.className = 'note-day-group';
+    dayEl.textContent = '📅 ' + day;
+    list.appendChild(dayEl);
+
+    notes.forEach(note => {
+      const card = document.createElement('div');
+      card.className = 'note-card' + (!note.read ? ' new' : '');
+      card.innerHTML = `
+        <div class="note-content">${escapeHtml(note.content)}</div>
+        <div class="note-meta">
+          <span>${note.from === '爸爸' ? '👨' : '👩'} ${note.from}</span>
+          <span>${new Date(note.time).toLocaleTimeString('zh-CN', {hour:'2-digit',minute:'2-digit'})}</span>
+        </div>
+      `;
+      // Mark as read on view
+      if (!note.read) {
+        note.read = true;
+        notesData[note.id] = note;
+        saveNotesLocal();
+        db.ref('trips/beijing2026/notes/' + note.id + '/read').set(true);
+      }
+      list.appendChild(card);
+    });
+  });
+  checkUnreadNotes();
+}
+
+function escapeHtml(text) {
+  const d = document.createElement('div');
+  d.textContent = text;
+  return d.innerHTML;
+}
+
+// Firebase sync - notes
+db.ref('trips/beijing2026/notes').on('value', snap => {
+  const data = snap.val();
+  if (data) {
+    notesData = data;
+    saveNotesLocal();
+    checkUnreadNotes();
+    // If notebox is open, re-render
+    if (document.getElementById('notebox-overlay').classList.contains('show')) {
+      renderNotebox();
+    }
+  }
+});
+
+checkUnreadNotes();
 </script>
 
 </body>
