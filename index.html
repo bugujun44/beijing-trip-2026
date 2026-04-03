@@ -739,7 +739,7 @@
     <span style="font-size:24px">⭐</span>
     <span>集章册</span>
   </button>
-  <button class="nav-btn" onclick="toggleOverlay('note-write-overlay')">
+  <button class="nav-btn nav-write" onclick="toggleOverlay('note-write-overlay')">
     <span style="font-size:24px">✏️</span>
     <span>写纸条</span>
   </button>
@@ -762,6 +762,28 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
+
+// === Role detection ===
+const urlParams = new URLSearchParams(window.location.search);
+const ROLE = urlParams.get('role') || 'all'; // baba, mama, nuannuan, all
+
+// Hide/show based on role
+document.addEventListener('DOMContentLoaded', () => {
+  if (ROLE === 'nuannuan') {
+    // 暖暖端：隐藏写纸条按钮
+    document.querySelector('.nav-write').style.display = 'none';
+  }
+  if (ROLE === 'baba' || ROLE === 'mama') {
+    // 爸妈端：隐藏信封通知（纸条是给暖暖看的）
+    document.getElementById('envelope-notify').style.display = 'none';
+    // 自动选中署名
+    const fromName = ROLE === 'baba' ? '爸爸' : '妈妈';
+    document.querySelectorAll('.note-from-toggle button').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.from === fromName);
+    });
+    noteFrom = fromName;
+  }
+});
 
 // === Overlay toggle ===
 function toggleOverlay(id) {
