@@ -781,7 +781,7 @@ document.addEventListener('click', e => {
 // === Stamp Collection ===
 const STAMPS = [
   { id: 'yiheyuan', name: '颐和园', icon: '⛲' },
-  { id: 'mutianyu', name: '慕田峪', icon: '🏯' },
+  { id: 'mutianyu', name: '慕田峪', icon: '🧱' },
   { id: 'niujie', name: '牛街', icon: '🍢' },
   { id: 'gugong', name: '故宫', icon: '🏛' },
   { id: 'guobo', name: '国博', icon: '🌋' },
@@ -1080,7 +1080,8 @@ const FUN_FACTS = {
 document.querySelectorAll('.timeline td').forEach(td => {
   const text = td.textContent;
   Object.keys(FUN_FACTS).forEach(keyword => {
-    if (text.includes(keyword) && !td.classList.contains('time') && !td.classList.contains('note')) {
+    if (text.includes(keyword) && !td.classList.contains('time') && !td.classList.contains('note')
+        && !/打车|前往|出发|回/.test(text)) {
       // Add ? trigger
       const trigger = document.createElement('span');
       trigger.className = 'flip-trigger';
