@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Body -->
+  <ellipse cx="100" cy="105" rx="72" ry="68" fill="#FFB0C8"/>
+  <ellipse cx="100" cy="105" rx="72" ry="68" fill="url(#bodyGrad)"/>
+  <defs>
+    <radialGradient id="bodyGrad" cx="40%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#FFCDE0"/>
+      <stop offset="100%" stop-color="#FF8CB0"/>
+    </radialGradient>
+    <radialGradient id="eyeGrad" cx="45%" cy="40%" r="55%">
+      <stop offset="0%" stop-color="#4466AA"/>
+      <stop offset="100%" stop-color="#1A2255"/>
+    </radialGradient>
+    <radialGradient id="footGrad" cx="50%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#FF6090"/>
+      <stop offset="100%" stop-color="#CC3366"/>
+    </radialGradient>
+  </defs>
+  <!-- Left foot -->
+  <ellipse cx="65" cy="168" rx="28" ry="14" fill="url(#footGrad)"/>
+  <!-- Right foot -->
+  <ellipse cx="135" cy="168" rx="28" ry="14" fill="url(#footGrad)"/>
+  <!-- Left arm -->
+  <ellipse cx="30" cy="120" rx="20" ry="14" fill="#FF8CB0" transform="rotate(-25 30 120)"/>
+  <!-- Right arm (waving) -->
+  <ellipse cx="170" cy="90" rx="20" ry="14" fill="#FF8CB0" transform="rotate(30 170 90)"/>
+  <!-- Left eye -->
+  <ellipse cx="80" cy="90" rx="12" ry="18" fill="url(#eyeGrad)"/>
+  <ellipse cx="82" cy="85" rx="5" ry="7" fill="#FFFFFF" opacity="0.9"/>
+  <ellipse cx="78" cy="96" rx="2" ry="3" fill="#FFFFFF" opacity="0.5"/>
+  <!-- Right eye -->
+  <ellipse cx="120" cy="90" rx="12" ry="18" fill="url(#eyeGrad)"/>
+  <ellipse cx="122" cy="85" rx="5" ry="7" fill="#FFFFFF" opacity="0.9"/>
+  <ellipse cx="118" cy="96" rx="2" ry="3" fill="#FFFFFF" opacity="0.5"/>
+  <!-- Mouth -->
+  <ellipse cx="100" cy="118" rx="8" ry="5" fill="#CC3366"/>
+  <ellipse cx="100" cy="116" rx="6" ry="3" fill="#FF6090"/>
+  <!-- Cheek blush -->
+  <ellipse cx="60" cy="112" rx="10" ry="7" fill="#FF6090" opacity="0.5"/>
+  <ellipse cx="140" cy="112" rx="10" ry="7" fill="#FF6090" opacity="0.5"/>
+</svg>
