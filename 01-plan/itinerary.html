@@ -1245,6 +1245,10 @@ const FUN_FACTS = {
   ]
 };
 
+// Global audio ref for stopping across players
+let _activeFactAudio = null;
+function _stopFactAudio() { if (_activeFactAudio) { _activeFactAudio.pause(); _activeFactAudio = null; } }
+
 // Find timeline cells that match fun fact keywords and add ? bubble
 document.querySelectorAll('.timeline td').forEach(td => {
   const text = td.textContent;
@@ -1261,13 +1265,13 @@ document.querySelectorAll('.timeline td').forEach(td => {
         let playerRow = row.nextElementSibling;
         // Toggle: 如果已有播放器，关闭
         if (playerRow && playerRow.classList.contains('fact-player-row')) {
-          speechSynthesis.cancel();
+          _stopFactAudio();
           playerRow.remove();
           return;
         }
         // 关闭其他播放器
         document.querySelectorAll('.fact-player-row').forEach(r => {
-          speechSynthesis.cancel();
+          _stopFactAudio();
           r.remove();
         });
         const facts = FUN_FACTS[keyword];
@@ -1308,31 +1312,14 @@ document.querySelectorAll('.timeline td').forEach(td => {
           progressFill.style.width = ((currentIndex + 1) / facts.length * 100) + '%';
           counter.textContent = (currentIndex + 1) + ' / ' + facts.length;
         }
-        function getChineseVoice() {
-          const voices = speechSynthesis.getVoices();
-          // 优先选年轻女声
-          const preferred = ['Tingting', 'Shanshan', '小燕', 'Lili', 'Google 普通话', 'Huihui'];
-          for (const name of preferred) {
-            const v = voices.find(v => v.name.includes(name) && v.lang.startsWith('zh'));
-            if (v) return v;
-          }
-          // 兜底：任意中文女声
-          return voices.find(v => v.lang.startsWith('zh')) || null;
-        }
-        // 预加载声音列表
-        speechSynthesis.getVoices();
-        if (speechSynthesis.onvoiceschanged !== undefined) {
-          speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
-        }
+        const AUDIO_PREFIX = { '颐和园':'yiheyuan','慕田峪':'mutianyu','牛街':'niujie','故宫':'gugong','庞贝':'pangbei','天安门':'tiananmen','北大':'beida','雍和宫':'yonghegong' };
         function speakCurrent() {
-          speechSynthesis.cancel();
-          const utter = new SpeechSynthesisUtterance(facts[currentIndex]);
-          utter.lang = 'zh-CN';
-          utter.rate = 0.95;
-          utter.pitch = 1.2;
-          const voice = getChineseVoice();
-          if (voice) utter.voice = voice;
-          utter.onend = () => {
+          _stopFactAudio();
+          const prefix = AUDIO_PREFIX[keyword];
+          if (!prefix) return;
+          const audio = new Audio('assets/audio/' + prefix + '_' + (currentIndex + 1) + '.mp3');
+          _activeFactAudio = audio;
+          audio.onended = () => {
             if (isPlaying && currentIndex < facts.length - 1) {
               currentIndex++;
               updateUI();
@@ -1341,15 +1328,16 @@ document.querySelectorAll('.timeline td').forEach(td => {
               isPlaying = false;
               playBtn.textContent = '▶';
               factText.classList.remove('speaking');
+              _activeFactAudio = null;
             }
           };
-          speechSynthesis.speak(utter);
+          audio.play();
           factText.classList.add('speaking');
         }
         playBtn.addEventListener('click', () => {
           if (isPlaying) {
             isPlaying = false;
-            speechSynthesis.cancel();
+            _stopFactAudio();
             playBtn.textContent = '▶';
             factText.classList.remove('speaking');
           } else {
@@ -1365,7 +1353,7 @@ document.querySelectorAll('.timeline td').forEach(td => {
           if (currentIndex < facts.length - 1) { currentIndex++; updateUI(); if (isPlaying) speakCurrent(); }
         });
         playerTd.querySelector('.fact-player-close').addEventListener('click', () => {
-          speechSynthesis.cancel();
+          _stopFactAudio();
           playerRow.remove();
         });
       });
