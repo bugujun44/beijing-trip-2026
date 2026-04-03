@@ -818,29 +818,19 @@ function renderStamps() {
     `;
     const circle = item.querySelector('.stamp-circle');
 
-    // Tap to stamp
+    // Tap to stamp or undo
     circle.addEventListener('click', () => {
+      pendingStampId = s.id;
       if (!done) {
-        pendingStampId = s.id;
         document.getElementById('stamp-confirm-text').textContent =
           `暖暖到${s.name}啦？`;
         document.getElementById('stamp-confirm').classList.add('show');
+      } else {
+        document.getElementById('stamp-undo-text').textContent =
+          `撤销${s.name}的印章？`;
+        document.getElementById('stamp-undo-confirm').classList.add('show');
       }
     });
-
-    // Long press to undo
-    circle.addEventListener('touchstart', e => {
-      if (done) {
-        longPressTimer = setTimeout(() => {
-          pendingStampId = s.id;
-          document.getElementById('stamp-undo-text').textContent =
-            `撤销${s.name}的印章？`;
-          document.getElementById('stamp-undo-confirm').classList.add('show');
-        }, 1500);
-      }
-    }, { passive: true });
-    circle.addEventListener('touchend', () => clearTimeout(longPressTimer));
-    circle.addEventListener('touchmove', () => clearTimeout(longPressTimer));
 
     grid.appendChild(item);
   });
