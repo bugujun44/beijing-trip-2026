@@ -23,7 +23,7 @@
   body {
     font-family: -apple-system, "PingFang SC", "Helvetica Neue", Arial, sans-serif;
     color: #4a3548; font-size: 14px; line-height: 1.6;
-    max-width: 480px; margin: 0 auto; padding: 16px;
+    max-width: 480px; margin: 0 auto; padding: 16px 16px 80px;
     background: linear-gradient(180deg, #fff0f5 0%, #f0e6ff 30%, #e6f0ff 60%, #fff0f5 100%);
     background-attachment: fixed;
     min-height: 100vh;
@@ -236,7 +236,64 @@
     font-size: 28px; display: block; margin-bottom: 4px;
     animation: float 4s ease-in-out infinite;
   }
+
+/* Bottom nav */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 100%; max-width: 480px;
+  display: flex; justify-content: space-around; align-items: center;
+  padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
+  background: rgba(255, 220, 240, 0.85);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-top: 2px solid #ffd6e7;
+  border-radius: 18px 18px 0 0;
+  z-index: 1000;
+  box-shadow: 0 -4px 16px rgba(200, 150, 220, 0.2);
+}
+.nav-btn {
+  background: none; border: none; font-size: 24px;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  color: #8b4570; cursor: pointer; position: relative;
+  -webkit-tap-highlight-color: transparent;
+}
+.nav-btn span { font-size: 10px; font-weight: 600; }
+.nav-btn .badge {
+  position: absolute; top: -4px; right: -4px;
+  background: #d63031; color: #fff; font-size: 10px; font-weight: 700;
+  width: 16px; height: 16px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  line-height: 1;
+}
+
+/* Overlay base */
+.overlay {
+  display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.4); z-index: 2000;
+  justify-content: center; align-items: flex-end;
+}
+.overlay.show { display: flex; }
+.overlay-panel {
+  background: linear-gradient(180deg, #fff0f5, #fff);
+  width: 100%; max-width: 480px; max-height: 85vh;
+  border-radius: 24px 24px 0 0; padding: 20px 16px;
+  overflow-y: auto; position: relative;
+  animation: slideUp 0.3s ease-out;
+}
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+.overlay-close {
+  position: absolute; top: 12px; right: 16px;
+  background: none; border: none; font-size: 20px; cursor: pointer; color: #a080b0;
+}
+.overlay-title {
+  font-size: 18px; font-weight: 700; color: #d63384;
+  text-align: center; margin-bottom: 16px;
+}
 </style>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
 <body>
 
@@ -434,6 +491,50 @@
   <span class="kirby-foot">(>'-')> ⭐ <('-'<)</span>
   暖暖的北京探险 | 2026
 </div>
+
+<!-- Bottom Nav -->
+<nav class="bottom-nav">
+  <button class="nav-btn" onclick="toggleOverlay('stamp-overlay')">
+    <span style="font-size:24px">⭐</span>
+    <span>集章册</span>
+  </button>
+  <button class="nav-btn" onclick="toggleOverlay('note-write-overlay')">
+    <span style="font-size:24px">✏️</span>
+    <span>写纸条</span>
+  </button>
+  <button class="nav-btn" id="notebox-btn" onclick="toggleOverlay('notebox-overlay')">
+    <span style="font-size:24px">📮</span>
+    <span>纸条盒</span>
+  </button>
+</nav>
+
+<script>
+// === Firebase Init ===
+const firebaseConfig = {
+  // USER: Replace with your Firebase config from Task 1
+  apiKey: "YOUR_API_KEY",
+  authDomain: "beijing-trip-2026.firebaseapp.com",
+  databaseURL: "https://beijing-trip-2026-default-rtdb.firebaseio.com",
+  projectId: "beijing-trip-2026"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// === Overlay toggle ===
+function toggleOverlay(id) {
+  const el = document.getElementById(id);
+  el.classList.toggle('show');
+}
+function closeOverlay(id) {
+  document.getElementById(id).classList.remove('show');
+}
+// Close overlay on backdrop click
+document.addEventListener('click', e => {
+  if (e.target.classList.contains('overlay')) {
+    e.target.classList.remove('show');
+  }
+});
+</script>
 
 </body>
 </html>
