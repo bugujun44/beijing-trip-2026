@@ -394,6 +394,15 @@
 }
 .note-send-btn:disabled { opacity: 0.5; }
 .note-charcount { text-align: right; font-size: 11px; color: #b898c0; }
+.note-drafts { display: flex; flex-direction: column; gap: 6px; }
+.note-drafts-title { font-size: 12px; color: #b898c0; font-weight: 600; }
+.note-draft-btn {
+  text-align: left; padding: 8px 12px; border-radius: 12px;
+  border: 1.5px dashed #ffd6e7; background: #fff9fc; color: #8b4570;
+  font-size: 13px; line-height: 1.4; cursor: pointer;
+  transition: all 0.2s;
+}
+.note-draft-btn:active { background: #ffe8f0; border-color: #d63384; }
 
 /* Envelope notification */
 .envelope-notify {
@@ -743,6 +752,7 @@
     <button class="overlay-close" onclick="closeOverlay('note-write-overlay')">✕</button>
     <div class="overlay-title">✏️ 给暖暖写纸条</div>
     <div class="note-write-form">
+      <div class="note-drafts" id="note-drafts"></div>
       <textarea id="note-input" maxlength="50" placeholder="写点什么给暖暖..."></textarea>
       <div class="note-charcount"><span id="note-charcount">0</span>/50</div>
       <div class="note-from-toggle">
@@ -968,6 +978,61 @@ try {
 function saveNotesLocal() {
   localStorage.setItem('notes', JSON.stringify(notesData));
 }
+
+// Quick drafts per day
+const NOTE_DRAFTS = {
+  '04-04': [
+    '暖暖第一次来北京，好勇敢！冒险开始啦！',
+    '颐和园那么大都走下来了，暖暖真棒！',
+    '今天自己拉着行李箱，越来越独立了！',
+    '暖暖今天在颐和园发现什么有趣的了吗？'
+  ],
+  '04-05': [
+    '暖暖爬长城太厉害了！比很多大人都强！',
+    '长城那么陡都没有放弃，暖暖真坚强💪',
+    '坐滑道下山的暖暖一定超酷！',
+    '早上6点就起来，暖暖好有毅力！'
+  ],
+  '04-06': [
+    '牛街的小吃好不好吃？暖暖最喜欢哪个？',
+    '故宫9999间房，暖暖最喜欢哪一间？',
+    '暖暖今天走了好多路，越来越能干了！',
+    '暖暖在故宫有没有找到小秘密呀？'
+  ],
+  '04-07': [
+    '暖暖在庞贝展看到了什么神奇的东西？',
+    '在天安门广场拍的照片一定很帅气！',
+    '暖暖走进北大校园，以后也可以来这里哦！',
+    '今天一天去了三个地方，暖暖体力真好！'
+  ],
+  '04-08': [
+    '五天旅行结束啦，暖暖长大了好多！',
+    '这次旅行暖暖最难忘的是什么呢？',
+    '暖暖这几天又勇敢又独立，爸妈好骄傲！',
+    '回深圳继续加油，暖暖是最棒的！'
+  ]
+};
+
+function renderDrafts() {
+  const container = document.getElementById('note-drafts');
+  const today = new Date();
+  const key = String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+  const drafts = NOTE_DRAFTS[key];
+  if (!drafts) { container.style.display = 'none'; return; }
+  container.style.display = 'flex';
+  container.innerHTML = '<div class="note-drafts-title">💡 今日快捷草稿</div>' +
+    drafts.map(d => '<button class="note-draft-btn">' + d + '</button>').join('');
+  container.querySelectorAll('.note-draft-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const input = document.getElementById('note-input');
+      input.value = btn.textContent;
+      document.getElementById('note-charcount').textContent = btn.textContent.length;
+      document.getElementById('note-send-btn').disabled = false;
+      input.focus();
+    });
+  });
+}
+renderDrafts();
 
 // Char count
 document.getElementById('note-input').addEventListener('input', e => {
