@@ -425,6 +425,39 @@
   100% { transform: scale(1) rotateX(0deg); opacity: 1; }
 }
 .note-card.new { animation: envelopeOpen 0.6s ease-out; }
+
+/* Fun fact flip */
+.flip-trigger {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: linear-gradient(135deg, #ffc8dd, #ffb8d0);
+  color: #d63384; font-size: 12px; font-weight: 700;
+  cursor: pointer; vertical-align: middle; margin-left: 4px;
+  box-shadow: 0 1px 4px rgba(255,150,180,0.3);
+  -webkit-tap-highlight-color: transparent;
+}
+.flip-container {
+  perspective: 800px; display: none; margin: 8px 0;
+}
+.flip-container.show { display: block; }
+.flip-inner {
+  position: relative; transition: transform 0.5s;
+  transform-style: preserve-3d;
+}
+.flip-inner.flipped { transform: rotateY(180deg); }
+.flip-back {
+  background: linear-gradient(135deg, #fff9e6, #fff0f5);
+  border: 2px solid #ffd700; border-radius: 14px;
+  padding: 14px; font-size: 13px; color: #5a4830; line-height: 1.6;
+  text-align: center;
+  backface-visibility: hidden;
+  transform: rotateY(180deg);
+  cursor: pointer;
+}
+.flip-back::before { content: '💡 '; }
+.flip-back .close-flip {
+  display: block; margin-top: 8px; font-size: 11px; color: #b898c0;
+}
 </style>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -1031,6 +1064,57 @@ db.ref('trips/beijing2026/notes').on('value', snap => {
 });
 
 checkUnreadNotes();
+
+// === Fun Fact Flip Cards ===
+const FUN_FACTS = {
+  '颐和园': '昆明湖的水面有 220 万平方米，相当于 128 个暖暖的学校（红树林外国语小学）那么大！',
+  '慕田峪': '长城的砖一块就有 20 斤重，比暖暖的书包还沉！古人要一块一块搬上山～',
+  '牛街': '牛街不是因为有牛，是因为回族人把街叫"牛肉街"，后来简称牛街',
+  '故宫': '故宫有 9999 间半房间！传说天上有 10000 间，皇帝不敢超过',
+  '庞贝': '庞贝古城被火山灰埋了 1700 年才被发现，整座城市像被按了暂停键 ⏸️',
+  '天安门': '天安门广场大到可以站 100 万人！是全中国最大的广场',
+  '北大': '北大的未名湖是因为大家想不出名字，所以就叫"未名"湖 😂',
+  '雍和宫': '雍和宫里有一尊 18 米高的大佛，用一整棵白檀树雕成的，比 6 层楼还高！'
+};
+
+// Find timeline cells that match fun fact keywords and add ? bubble
+document.querySelectorAll('.timeline td').forEach(td => {
+  const text = td.textContent;
+  Object.keys(FUN_FACTS).forEach(keyword => {
+    if (text.includes(keyword) && !td.classList.contains('time') && !td.classList.contains('note')) {
+      // Add ? trigger
+      const trigger = document.createElement('span');
+      trigger.className = 'flip-trigger';
+      trigger.textContent = '?';
+      trigger.addEventListener('click', e => {
+        e.stopPropagation();
+        // Find or create flip container
+        const row = td.closest('tr');
+        let flipRow = row.nextElementSibling;
+        if (!flipRow || !flipRow.classList.contains('flip-row')) {
+          flipRow = document.createElement('tr');
+          flipRow.className = 'flip-row';
+          const flipTd = document.createElement('td');
+          flipTd.colSpan = 3;
+          flipTd.innerHTML = `
+            <div class="flip-container show">
+              <div class="flip-back" style="transform:none" onclick="this.closest('.flip-container').classList.remove('show')">
+                ${FUN_FACTS[keyword]}
+                <span class="close-flip">点击收起</span>
+              </div>
+            </div>
+          `;
+          flipRow.appendChild(flipTd);
+          row.after(flipRow);
+        } else {
+          const container = flipRow.querySelector('.flip-container');
+          container.classList.toggle('show');
+        }
+      });
+      td.appendChild(trigger);
+    }
+  });
+});
 </script>
 
 </body>
