@@ -1,57 +1,69 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
   <defs>
     <radialGradient id="wdBody" cx="40%" cy="35%" r="65%">
-      <stop offset="0%" stop-color="#F5C070"/>
-      <stop offset="100%" stop-color="#D4853A"/>
+      <stop offset="0%" stop-color="#E8894A"/>
+      <stop offset="100%" stop-color="#D06830"/>
     </radialGradient>
     <radialGradient id="wdFoot" cx="50%" cy="30%" r="70%">
-      <stop offset="0%" stop-color="#D4853A"/>
-      <stop offset="100%" stop-color="#A06020"/>
+      <stop offset="0%" stop-color="#D05535"/>
+      <stop offset="100%" stop-color="#A04028"/>
     </radialGradient>
   </defs>
 
-  <!-- Body (breathe) -->
-  <ellipse cx="100" cy="95" rx="62" fill="#E8A050">
-    <animate attributeName="ry" values="60;62;60" dur="2.2s" repeatCount="indefinite"/>
+  <!-- Feet (dark reddish-orange, walking) -->
+  <ellipse cx="68" rx="24" ry="11" fill="url(#wdFoot)">
+    <animate attributeName="cy" values="160;157;160;163;160" dur="0.4s" repeatCount="indefinite"/>
   </ellipse>
-  <ellipse cx="100" cy="95" rx="62" fill="url(#wdBody)">
-    <animate attributeName="ry" values="60;62;60" dur="2.2s" repeatCount="indefinite"/>
-  </ellipse>
-
-  <!-- Left foot (walking) -->
-  <ellipse cx="70" rx="22" ry="11" fill="url(#wdFoot)">
-    <animate attributeName="cy" values="158;155;158;161;158" dur="0.4s" repeatCount="indefinite"/>
-  </ellipse>
-  <!-- Right foot (walking, offset) -->
-  <ellipse cx="130" rx="22" ry="11" fill="url(#wdFoot)">
-    <animate attributeName="cy" values="158;161;158;155;158" dur="0.4s" repeatCount="indefinite"/>
+  <ellipse cx="132" rx="24" ry="11" fill="url(#wdFoot)">
+    <animate attributeName="cy" values="160;163;160;157;160" dur="0.4s" repeatCount="indefinite"/>
   </ellipse>
 
-  <!-- Left eye (blink) -->
-  <ellipse cx="75" cy="88" rx="10" fill="#1A1A2E">
+  <!-- Body (warm orange sphere, breathe) -->
+  <ellipse cx="100" cy="92" rx="64" fill="#E07A3A">
+    <animate attributeName="ry" values="62;64;62" dur="2.2s" repeatCount="indefinite"/>
+  </ellipse>
+  <ellipse cx="100" cy="92" rx="64" fill="url(#wdBody)">
+    <animate attributeName="ry" values="62;64;62" dur="2.2s" repeatCount="indefinite"/>
+  </ellipse>
+
+  <!-- Arms (small orange nubs on sides) -->
+  <ellipse cx="38" cy="108" rx="12" ry="9" fill="#D06830" transform="rotate(-20 38 108)"/>
+  <ellipse cx="162" cy="108" rx="12" ry="9" fill="#D06830" transform="rotate(20 162 108)"/>
+
+  <!-- Face patch (cream, inverted-pear/heart shape) -->
+  <path d="M100 55
+    C90 53, 75 60, 66 75
+    C57 90, 56 108, 62 120
+    C70 135, 85 142, 100 143
+    C115 142, 130 135, 138 120
+    C144 108, 143 90, 134 75
+    C125 60, 110 53, 100 55Z"
+    fill="#F7D2AE"/>
+
+  <!-- Eyes (dark brown tall ovals, blink) -->
+  <ellipse cx="80" cy="92" rx="8" ry="14" fill="#2C1A12">
     <animate attributeName="ry" values="14;14;14;1;14" dur="3.5s"
       keyTimes="0;0.65;0.82;0.88;1" repeatCount="indefinite"/>
   </ellipse>
-  <ellipse cx="77" cy="83" rx="4" fill="#FFFFFF" opacity="0.85">
-    <animate attributeName="ry" values="5;5;5;0.3;5" dur="3.5s"
+  <ellipse cx="83" cy="86" rx="3" ry="4.5" fill="#FFFFFF" opacity="0.85">
+    <animate attributeName="ry" values="4.5;4.5;4.5;0.3;4.5" dur="3.5s"
       keyTimes="0;0.65;0.82;0.88;1" repeatCount="indefinite"/>
   </ellipse>
 
-  <!-- Right eye (blink) -->
-  <ellipse cx="125" cy="88" rx="10" fill="#1A1A2E">
+  <ellipse cx="120" cy="92" rx="8" ry="14" fill="#2C1A12">
     <animate attributeName="ry" values="14;14;14;1;14" dur="3.5s"
       keyTimes="0;0.65;0.82;0.88;1" repeatCount="indefinite"/>
   </ellipse>
-  <ellipse cx="127" cy="83" rx="4" fill="#FFFFFF" opacity="0.85">
-    <animate attributeName="ry" values="5;5;5;0.3;5" dur="3.5s"
+  <ellipse cx="123" cy="86" rx="3" ry="4.5" fill="#FFFFFF" opacity="0.85">
+    <animate attributeName="ry" values="4.5;4.5;4.5;0.3;4.5" dur="3.5s"
       keyTimes="0;0.65;0.82;0.88;1" repeatCount="indefinite"/>
   </ellipse>
 
-  <!-- Cheek blush (pulse) -->
-  <ellipse cx="55" cy="105" rx="9" ry="6" fill="#E87040">
-    <animate attributeName="opacity" values="0.4;0.65;0.4" dur="2.2s" repeatCount="indefinite"/>
+  <!-- Cheek blush (rosy pink, at face patch edges) -->
+  <ellipse cx="63" cy="108" rx="10" ry="7" fill="#E8A79B">
+    <animate attributeName="opacity" values="0.4;0.6;0.4" dur="2.2s" repeatCount="indefinite"/>
   </ellipse>
-  <ellipse cx="145" cy="105" rx="9" ry="6" fill="#E87040">
-    <animate attributeName="opacity" values="0.4;0.65;0.4" dur="2.2s" repeatCount="indefinite"/>
+  <ellipse cx="137" cy="108" rx="10" ry="7" fill="#E8A79B">
+    <animate attributeName="opacity" values="0.4;0.6;0.4" dur="2.2s" repeatCount="indefinite"/>
   </ellipse>
 </svg>
