@@ -65,6 +65,39 @@
     animation: float 3s ease-in-out infinite;
     display: inline-block;
   }
+
+  /* Walk stage */
+  .walk-stage {
+    width: 100%; height: 72px; position: relative;
+    overflow: hidden; margin-bottom: 4px;
+  }
+  .walker {
+    position: absolute; bottom: 0; left: 0;
+    display: flex; align-items: flex-end; gap: 4px;
+    animation: walkAcross 10s linear infinite;
+  }
+  .walk-char {
+    animation: walkBob 0.35s ease-in-out infinite;
+    display: block;
+  }
+  .walk-dee {
+    animation-delay: 0.175s;
+  }
+  @keyframes walkAcross {
+    0%   { transform: translate(-120px, 0); }
+    42%  { transform: translate(140px, 0); }
+    47%  { transform: translate(165px, -8px); }
+    50%  { transform: translate(180px, -24px); }
+    53%  { transform: translate(195px, -8px); }
+    58%  { transform: translate(220px, 0); }
+    95%  { transform: translate(500px, 0); }
+    100% { transform: translate(500px, 0); }
+  }
+  @keyframes walkBob {
+    0%, 100% { transform: translateY(0) rotate(-2deg); }
+    50% { transform: translateY(-3px) rotate(2deg); }
+  }
+
   .header h1 {
     font-size: 22px; color: #d63384; margin-bottom: 4px;
     letter-spacing: 3px; text-shadow: 1px 1px 0 rgba(255,255,255,0.6);
@@ -513,7 +546,12 @@
   <span class="star-deco s1">⭐</span>
   <span class="star-deco s2">🌟</span>
   <span class="star-deco s3">✨</span>
-  <img class="kirby" src="assets/kirby.svg" alt="卡比" width="80" height="80">
+  <div class="walk-stage">
+    <div class="walker">
+      <img class="walk-char" src="assets/kirby.svg" alt="卡比" width="64" height="64">
+      <img class="walk-char walk-dee" src="assets/waddle-dee.svg" alt="瓦豆鲁迪" width="48" height="48">
+    </div>
+  </div>
   <h1>清明北京之旅</h1>
   <div class="subtitle">04-04 ~ 04-08 | 5 天 4 晚</div>
   <div class="members">👨 jumpin + 👩 张奕 + 👧 暖暖（8 岁）</div>

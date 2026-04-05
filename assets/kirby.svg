@@ -14,7 +14,7 @@
     </radialGradient>
   </defs>
 
-  <!-- Body (gentle breathe) -->
+  <!-- Body (breathe) -->
   <ellipse cx="100" cy="105" rx="72" fill="#FFB0C8">
     <animate attributeName="ry" values="68;71;68" dur="2s" repeatCount="indefinite"/>
   </ellipse>
@@ -22,10 +22,14 @@
     <animate attributeName="ry" values="68;71;68" dur="2s" repeatCount="indefinite"/>
   </ellipse>
 
-  <!-- Left foot -->
-  <ellipse cx="65" cy="168" rx="28" ry="14" fill="url(#footGrad)"/>
-  <!-- Right foot -->
-  <ellipse cx="135" cy="168" rx="28" ry="14" fill="url(#footGrad)"/>
+  <!-- Left foot (walking) -->
+  <ellipse cx="65" rx="28" ry="14" fill="url(#footGrad)">
+    <animate attributeName="cy" values="168;165;168;171;168" dur="0.4s" repeatCount="indefinite"/>
+  </ellipse>
+  <!-- Right foot (walking, offset) -->
+  <ellipse cx="135" rx="28" ry="14" fill="url(#footGrad)">
+    <animate attributeName="cy" values="168;171;168;165;168" dur="0.4s" repeatCount="indefinite"/>
+  </ellipse>
 
   <!-- Left arm -->
   <ellipse cx="30" cy="120" rx="20" ry="14" fill="#FF8CB0" transform="rotate(-25 30 120)"/>
